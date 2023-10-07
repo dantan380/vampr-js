@@ -21,10 +21,10 @@ class Vampire {
 
   // Returns the number of vampires away from the original vampire this vampire is
   get numberOfVampiresFromOriginal() {
-    let numberOfVampires = 0
+    let numberOfVampires = 0;
     let currentVampire = this;
 
-    while(currentVampire.creator) {
+    while (currentVampire.creator) {
       currentVampire = currentVampire.creator;
       numberOfVampires++;
     }
@@ -38,11 +38,11 @@ class Vampire {
     let currentVampire = this;
     let otherVampire = vampire;
 
-    while(currentVampire.creator) {
+    while (currentVampire.creator) {
       currentVampire = currentVampire.creator;
       numberOfVampiresForCV++;
     }
-    while(otherVampire.creator) {
+    while (otherVampire.creator) {
       otherVampire = otherVampire.creator;
       numberOfVampiresForOV++;
     }
@@ -63,7 +63,50 @@ class Vampire {
   closestCommonAncestor(vampire) {
 
   }
+
+  // Returns the vampire object with that name, or null if no vampire exists with that name
+  vampireWithName(name) {
+    if (name === this.name) {
+      return this;
+    }
+    for (let descendant of this.offspring) {
+      let result = descendant.vampireWithName(name);
+      if (result) {
+        return result;
+      }
+    }
+    return null;
+  }
+
+  // Returns the total number of vampires that exist
+  get totalDescendents() {
+    let totalVampires = 0;
+
+    for (let descendant of this.offspring) {
+      totalVampires += descendant.totalDescendents + 1;
+    }
+
+    return totalVampires;
+  }
+
+  // Returns an array of all the vampires that were converted after 1980
+  get allMillennialVampires() {
+    let totalVampires = [];
+
+    if (this.yearConverted > 1980) {
+      totalVampires.push(this);
+    }
+    
+    for (let i = 0; i < this.offspring.length; i++) {
+      const millennialDescendants = this.offspring[i].allMillennialVampires;
+      totalVampires = totalVampires.concat(millennialDescendants);
+    }
+
+    return totalVampires;
+  }
 }
+const gordon = new Vampire("Gordon", 1999);
+console.log(gordon.vampireWithName(gordon.name).name);
 
 module.exports = Vampire;
 
